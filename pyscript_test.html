@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Kvííííz!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+	<script defer src="https://pyscript.net/alpha/pyscript.js"></script>	
+	<style>
+		
+		body{
+			font-family: Verdana, sans-serif;
+			background-color: #f2f2f2;
+		
+		}
+		.questionbox {			
+			background-color: white;
+			border: 3px solid #0455BD;
+			padding: 20px;			
+			border-radius: 14px;
+			border-color: #000000;
+			box-shadow: 5px 5px 10px grey;
+		}
+		.button {
+			background-color: #0455BD;
+			color: #FFFFFF;
+			padding: 8px 26px;
+			text-align: center;
+			/*display: block;*/
+			font-size: 18px;
+			border-color: #000000;
+			border-radius: 30px;
+			border-width: 2px;
+			box-shadow: 5px 5px 10px grey;			
+		}
+		.button:hover {
+			background-color: #FFFFFF;
+			color: #0455BD;
+		}
+		#question {			
+			font-size: 1.2em;
+			background-color: #0455BD;			
+			color: #FFFFFF;
+			padding: 20px;
+			border-width: 2px;			
+			border-radius: 10px;
+			border-color: #000000;
+			box-shadow: 2px 2px 10px grey;
+			margin: 0px 0px 30px 0px;		
+		}
+		.answers {
+			border-style: solid;
+			border-width: 2px;
+			border-color: #0455BD;
+			padding: 5px 20px 5px 20px;
+			border-radius: 8px;	
+			margin: 0px 0px 10px 0px;		
+		}
+		.answers:hover {			
+			background-color: #ededf8;
+			box-shadow: 0px 0px 5px #021936;
+		}
+		.result{
+			text-align: center;
+			font-weight: bold;
+			color: #0455BD;			
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container text-center">    
+		<div class="questionbox">
+			<div id="question">Kérdés</div>	
+			<div class="answers" id="answer_a">A </div>
+			<div class="answers" id="answer_b">B</div>
+			<div class="answers" id="answer_c">C</div>	
+			<div class="answers" id="answer_d">D</div>
+			<br>
+			<div class="result" id="result">0/0 (100%)</div>
+			<br>
+			<button class="button" type="button" id="next">START</button>
+		</div>
+</div>
+<br>
+<div class="container text-center">
+	<button class="button" type="button" id="topic1">Téma1</button>
+	<button class="button" type="button" id="topic2">Téma2</button>
+</div>
+
+	<py-script>
+		from js import document
+		from pyodide import create_proxy
+		import random
+
+		
+		good = 0
+		bad = 0
+		
+		ans_dict = {
+		1: "answer_a",
+		2: "answer_b",
+		3: "answer_c",
+		4: "answer_d"
+		}
+		
+		
+		topic1 = [
+			['Kérdés1', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés2', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés3', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés4', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés5', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés6', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés7', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés8', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés9', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés10', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1]
+		]
+		
+		topic2 = [
+			['Kérdés1', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés2', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés3', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés4', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés5', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés6', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés7', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés8', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés9', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1],
+			['Kérdés10', 'Válasz1', 'Válasz2', 'Válasz3', 'Válasz4', 1]
+		]
+
+		
+		questionbank_list = [['Válassz témakört!', 'x', 'x', 'x', 'x', 0]]
+		
+		question_number = 42
+		random_correct = 42
+		
+
+		def is_it_correct(answer):
+			global correct_answer
+			global ans_dict
+			global questionbank_list
+			global question_number
+			global random_correct
+			global good
+			global bad
+			
+			for i in ans_dict:
+				document.getElementById(ans_dict[i]).style = "pointer-events: none"
+
+			if answer == random_correct:				
+				questionbank_list.remove(questionbank_list[question_number])
+				good += 1
+				document.getElementById(ans_dict[answer]).style.color = "white"
+				document.getElementById(ans_dict[answer]).style.backgroundColor = "#198754"
+				document.getElementById(ans_dict[answer]).style.border = "solid 2px #198754";
+				document.getElementById("result").innerHTML = str(good) + '/' + str(good+bad) + " (" + str(round(good/(good+bad)*100,2)) + "%)"				
+				
+				
+			else:
+				bad += 1
+				document.getElementById(ans_dict[answer]).style.color = "white"
+				document.getElementById(ans_dict[answer]).style.backgroundColor = "#ff4d4d"
+				document.getElementById(ans_dict[answer]).style.border = "solid 2px #ff4d4d";
+				document.getElementById(ans_dict[random_correct]).style.color = "white"
+				document.getElementById(ans_dict[random_correct]).style.backgroundColor = "#198754"
+				document.getElementById(ans_dict[random_correct]).style.border = "solid 2px #198754";
+				document.getElementById("result").innerHTML = str(good) + '/' + str(good+bad) + " (" + str(round(good/(good+bad)*100,2)) + "%)"
+
+
+		
+		def topic1_func(event):
+			global questionbank_list 
+			questionbank_list = topic1.copy()
+		
+		def topic2_func(event):
+			global questionbank_list 
+			questionbank_list = topic2.copy()
+		
+		
+			
+		
+		def answer_a_func(event):
+			is_it_correct(1)
+
+		def answer_b_func(event):
+			is_it_correct(2)
+
+		def answer_c_func(event):
+			is_it_correct(3)
+
+		def answer_d_func(event):
+			is_it_correct(4)
+
+		def answer_next_func(event):
+			global ans_dict
+			global questionbank_list
+			global question_number
+			global random_correct
+			
+			document.getElementById("next").innerText = "Következő"
+			
+			question_number = random.randint(0, len(questionbank_list)-1)
+			
+			random_question = questionbank_list[question_number][0]
+			random_q_answers = [questionbank_list[question_number][1], questionbank_list[question_number][2], questionbank_list[question_number][3], questionbank_list[question_number][4]]
+			
+			
+			
+			document.getElementById("question").innerText = random_question
+						
+			for i in ans_dict:
+				document.getElementById(ans_dict[i]).style = ""
+				random.shuffle(random_q_answers)
+				next_answer = random_q_answers.pop()
+				document.getElementById(ans_dict[i]).innerText = next_answer
+				if next_answer == questionbank_list[question_number][questionbank_list[question_number][5]]:
+					random_correct = i
+					
+
+
+		def init():			
+			a_proxy = create_proxy(answer_a_func)
+			b_proxy = create_proxy(answer_b_func)
+			c_proxy = create_proxy(answer_c_func)
+			d_proxy = create_proxy(answer_d_func)
+			
+			
+			click_next_proxy = create_proxy(answer_next_func)	
+			
+			
+			click_topic1_proxy = create_proxy(topic1_func)
+			click_topic2_proxy = create_proxy(topic2_func)			
+
+			
+			a = document.getElementById("answer_a")
+			a.addEventListener("click", a_proxy)
+			b = document.getElementById("answer_b")
+			b.addEventListener("click", b_proxy)
+			c = document.getElementById("answer_c")
+			c.addEventListener("click", c_proxy)
+			d = document.getElementById("answer_d")
+			d.addEventListener("click", d_proxy)
+			next_button = document.getElementById("next")
+			next_button.addEventListener("click", click_next_proxy)
+			
+			topic1_button = document.getElementById("topic1")
+			topic1_button.addEventListener("click", click_topic1_proxy)
+			
+			topic2_button = document.getElementById("topic2")
+			topic2_button.addEventListener("click", click_topic2_proxy)
+
+		init()
+	</py-script>
+
+</body>
+</html>
